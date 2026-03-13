@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ゆらぎめーかー | 環境音ミキサー</title>
+  <meta name="description" content="雨、焚き火、カフェなどの環境音を自分好みにミックスして流せるリラックスツール。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- ヘッダー -->
+    <header class="header">
+      <div class="header-left">
+        <span class="logo">🌊</span>
+        <h1 class="app-title">ゆらぎめーかー</h1>
+      </div>
+      <div class="header-right">
+        <button class="preset-save-btn" id="preset-save-btn" title="プリセット保存">💾</button>
+      </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main">
+      <!-- プリセットバー -->
+      <section class="presets-bar">
+        <h2 class="section-label">プリセット</h2>
+        <div class="preset-list" id="preset-list"></div>
+      </section>
+
+      <!-- サウンドカード -->
+      <section class="sound-grid" id="sound-grid"></section>
+
+      <!-- コントロールバー -->
+      <div class="control-bar" id="control-bar">
+        <div class="master-volume">
+          <span class="control-icon">🔊</span>
+          <input type="range" class="volume-slider master-slider" id="master-volume" min="0" max="100" value="70" />
+          <span class="volume-value" id="master-value">70%</span>
+        </div>
+        <div class="sleep-timer">
+          <button class="sleep-btn" id="sleep-btn">
+            <span class="sleep-icon">😴</span>
+            <span class="sleep-text" id="sleep-text">スリープ</span>
+          </button>
+          <div class="sleep-menu hidden" id="sleep-menu">
+            <button class="sleep-option" data-minutes="15">15分</button>
+            <button class="sleep-option" data-minutes="30">30分</button>
+            <button class="sleep-option" data-minutes="60">60分</button>
+            <button class="sleep-option" data-minutes="0">解除</button>
+          </div>
+        </div>
+        <button class="stop-all-btn" id="stop-all-btn" title="全停止">⏹</button>
+      </div>
+    </main>
+
+    <!-- プリセット保存モーダル -->
+    <div class="modal-overlay hidden" id="save-modal">
+      <div class="modal">
+        <h2>💾 プリセットを保存</h2>
+        <input type="text" class="modal-input" id="preset-name-input" placeholder="プリセット名..." />
+        <div class="modal-actions">
+          <button class="modal-btn cancel" id="save-cancel">キャンセル</button>
+          <button class="modal-btn save" id="save-confirm">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="audio-engine.js"></script>
+  <script src="presets.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
