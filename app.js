@@ -53,14 +53,16 @@
   }
 
   // ===== サウンド制御 =====
-  function toggleSound(id) {
+  async function toggleSound(id) {
     if (AudioEngine.isPlaying(id)) {
       AudioEngine.stop(id);
       $(`#card-${id}`).classList.remove('active');
     } else {
+      const soundDef = SOUND_LIBRARY.find(s => s.id === id);
+      const url = soundDef ? `sounds/${soundDef.file}` : null;
       const slider = $(`[data-id="${id}"].volume-slider`);
       const vol = slider ? parseInt(slider.value) / 100 : 0.5;
-      AudioEngine.play(id);
+      await AudioEngine.play(id, url);
       AudioEngine.setVolume(id, vol);
       $(`#card-${id}`).classList.add('active');
     }
@@ -83,7 +85,7 @@
   }
 
   // ===== プリセット適用 =====
-  function applyPreset(presetId) {
+  async function applyPreset(presetId) {
     const allPresets = getAllPresets();
     const preset = allPresets.find(p => p.id === presetId);
     if (!preset) return;
@@ -94,11 +96,14 @@
 
     // 音源再生
     for (const s of preset.sounds) {
+      const soundDef = SOUND_LIBRARY.find(lib => lib.id === s.id);
+      const url = soundDef ? `sounds/${soundDef.file}` : null;
+
       // スライダー更新
       const slider = $(`[data-id="${s.id}"].volume-slider`);
       if (slider) slider.value = Math.round(s.volume * 100);
 
-      AudioEngine.play(s.id);
+      await AudioEngine.play(s.id, url);
       AudioEngine.setVolume(s.id, s.volume);
       $(`#card-${s.id}`)?.classList.add('active');
     }
