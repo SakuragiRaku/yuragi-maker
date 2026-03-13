@@ -12,7 +12,7 @@
   const $$ = (sel) => document.querySelectorAll(sel);
 
   // ===== 初期化 =====
-  async function init() {
+  function init() {
     renderSoundCards();
     renderPresets();
     setupEventListeners();
@@ -53,22 +53,15 @@
   }
 
   // ===== サウンド制御 =====
-  async function toggleSound(id) {
-    await audioEngine.init();
-
-    if (audioEngine.isPlaying(id)) {
-      audioEngine.stop(id);
+  function toggleSound(id) {
+    if (AudioEngine.isPlaying(id)) {
+      AudioEngine.stop(id);
       $(`#card-${id}`).classList.remove('active');
     } else {
-      const soundDef = SOUND_LIBRARY.find(s => s.id === id);
-      if (soundDef && !audioEngine.buffers[id]) {
-        await audioEngine.loadSound(id, `sounds/${soundDef.file}`);
-      }
-
       const slider = $(`[data-id="${id}"].volume-slider`);
       const vol = slider ? parseInt(slider.value) / 100 : 0.5;
-      audioEngine.setVolume(id, vol);
-      audioEngine.play(id);
+      AudioEngine.play(id);
+      AudioEngine.setVolume(id, vol);
       $(`#card-${id}`).classList.add('active');
     }
 
@@ -78,11 +71,11 @@
   }
 
   function updateVolume(id, volume) {
-    audioEngine.setVolume(id, volume / 100);
+    AudioEngine.setVolume(id, volume / 100);
   }
 
   function stopAll() {
-    audioEngine.stopAll();
+    AudioEngine.stopAll();
     $$('.sound-card').forEach(c => c.classList.remove('active'));
     activePreset = null;
     $$('.preset-tag').forEach(t => t.classList.remove('active'));
@@ -90,35 +83,28 @@
   }
 
   // ===== プリセット適用 =====
-  async function applyPreset(presetId) {
-    await audioEngine.init();
-
+  function applyPreset(presetId) {
     const allPresets = getAllPresets();
     const preset = allPresets.find(p => p.id === presetId);
     if (!preset) return;
 
     // 全停止
-    audioEngine.stopAll();
+    AudioEngine.stopAll();
     $$('.sound-card').forEach(c => c.classList.remove('active'));
 
-    // 音源読み込み・再生
+    // 音源再生
     for (const s of preset.sounds) {
-      const soundDef = SOUND_LIBRARY.find(lib => lib.id === s.id);
-      if (soundDef && !audioEngine.buffers[s.id]) {
-        await audioEngine.loadSound(s.id, `sounds/${soundDef.file}`);
-      }
-
       // スライダー更新
       const slider = $(`[data-id="${s.id}"].volume-slider`);
       if (slider) slider.value = Math.round(s.volume * 100);
 
-      audioEngine.setVolume(s.id, s.volume);
-      audioEngine.play(s.id);
+      AudioEngine.play(s.id);
+      AudioEngine.setVolume(s.id, s.volume);
       $(`#card-${s.id}`)?.classList.add('active');
     }
 
     if (preset.masterVolume !== undefined) {
-      audioEngine.setMasterVolume(preset.masterVolume);
+      AudioEngine.setMasterVolume(preset.masterVolume);
       $('#master-volume').value = Math.round(preset.masterVolume * 100);
       $('#master-value').textContent = Math.round(preset.masterVolume * 100) + '%';
     }
@@ -135,7 +121,11 @@
   function savePreset(name) {
     if (!name.trim()) return;
 
-    const activeSounds = audioEngine.getActiveSounds();
+    const activeSounds = [];
+    $$('.sound-card.active').forEach(card => {
+      activeSounds.push(card.dataset.id);
+    });
+
     if (activeSounds.length === 0) return;
 
     const sounds = activeSounds.map(id => {
@@ -229,9 +219,7 @@
       if (state.masterVolume !== undefined) {
         $('#master-volume').value = state.masterVolume;
         $('#master-value').textContent = state.masterVolume + '%';
-        if (typeof audioEngine !== 'undefined') {
-          audioEngine.setMasterVolume(state.masterVolume / 100);
-        }
+        AudioEngine.setMasterVolume(state.masterVolume / 100);
       }
     } catch { /* ignore */ }
   }
@@ -242,7 +230,6 @@
     $('#sound-grid').addEventListener('click', (e) => {
       const card = e.target.closest('.sound-card');
       if (!card) return;
-      // スライダークリックは除外
       if (e.target.classList.contains('volume-slider')) return;
       toggleSound(card.dataset.id);
     });
@@ -257,9 +244,7 @@
     $('#master-volume').addEventListener('input', (e) => {
       const vol = parseInt(e.target.value);
       $('#master-value').textContent = vol + '%';
-      if (typeof audioEngine !== 'undefined') {
-        audioEngine.setMasterVolume(vol / 100);
-      }
+      AudioEngine.setMasterVolume(vol / 100);
       saveCurrentState();
     });
 
@@ -282,7 +267,8 @@
 
     // プリセット保存
     $('#preset-save-btn').addEventListener('click', () => {
-      const activeSounds = audioEngine.getActiveSounds();
+      const activeSounds = [];
+      $$('.sound-card.active').forEach(card => activeSounds.push(card.dataset.id));
       if (activeSounds.length === 0) {
         alert('音を再生してからプリセットを保存してください');
         return;
@@ -326,7 +312,6 @@
       });
     });
 
-    // メニュー外クリックで閉じる
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.sleep-timer')) {
         $('#sleep-menu').classList.add('hidden');
