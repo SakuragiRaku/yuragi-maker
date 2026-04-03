@@ -1,26 +1,17 @@
 /* ===== ゆらぎめーかー - スタイルシート ===== */
 
 :root {
-  --bg-primary: #0f1118;
-  --bg-secondary: #1a1d2e;
-  --bg-tertiary: #242840;
-  --bg-card: #1e2235;
-  --text-primary: #e8e6f0;
-  --text-secondary: #8b8aa0;
-  --text-muted: #5a596e;
-  --accent: #7c6cf0;
-  --accent-light: #9d8ff6;
-  --accent-dark: #5b4ddb;
-  --accent-glow: rgba(124, 108, 240, 0.3);
-  --active-green: #4ade80;
-  --active-glow: rgba(74, 222, 128, 0.25);
-  --border: #2a2d42;
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-full: 999px;
+  --bg-primary:#f8f9fb;--bg-secondary:#fff;--bg-tertiary:#f0f2f5;--text-primary:#1a1d23;--text-secondary:#5f6577;--text-tertiary:#9098a9;--border-color:#e2e5eb;
+  --accent:#7c6cf0;--accent-hover:#5b4ddb;--accent-light:#9d8ff6;--accent-dark:#5b4ddb;--success:#4ade80;--warning:#f59e0b;--danger:#ef4444;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow-md:0 4px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.12);
+  --border:var(--border-color);--text-muted:var(--text-tertiary);
+  --radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-full:999px;
+  --bg-card:var(--bg-secondary);--active-green:#4ade80;--active-glow:rgba(74, 222, 128, 0.25);
+  --accent-glow:rgba(124, 108, 240, 0.3);
+}
+[data-theme="dark"] {
+  --bg-primary:#0f1118;--bg-secondary:#1a1d2e;--bg-tertiary:#242840;--text-primary:#e8e6f0;--text-secondary:#8b8aa0;--text-tertiary:#5a596e;--border-color:#2a2d42;
+  --bg-card:#1e2235;--border:#2a2d42;
 }
 
 *, *::before, *::after {
@@ -38,14 +29,14 @@ body {
 }
 
 /* ===== App ===== */
-.app {
+.app-container {
   max-width: 600px;
   margin: 0 auto;
   padding: 0 20px 120px;
 }
 
 /* ===== Header ===== */
-.header {
+.app-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
